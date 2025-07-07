@@ -3,7 +3,7 @@ import APIFeatures from '../utils/apiFeatures.js';
 import catchAsync from '../utils/catchAsync.js';
 import AppError from '../utils/appError.js';
 
-import { deleteOne, updateOne } from "./handlerFactory.js"
+import { createOne, deleteOne, updateOne } from "./handlerFactory.js"
 
 export const updateMe = catchAsync(async (req, res, next) => {
   // 1) Create error if user POSTs password data
@@ -68,5 +68,6 @@ export const getUser = catchAsync(async (req, res, next) => {
   });
 });
 
+export const createUser = createOne(User);
 export const updateUser = updateOne(User);
 export const deleteUser = deleteOne(User);
