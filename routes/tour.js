@@ -20,13 +20,15 @@ router.route('/top-5-tours').get(aliasTopTours, getAllTours);
 router.route('/tour-stats').get(getTourStats);
 router.route('/monthly-plan/:year').get(getMonthlyPlan);
 
-router.route('/').get(protect, getAllTours).post(createTour);
+router.route('/')
+  .get(getAllTours)
+  .post(protect, restrictTo('admin', 'lead-guide'), createTour);
 
 router
   .route('/:id')
   .get(getTour)
-  .patch(updateTour)
-  .delete(protect, restrictTo('admin'), deleteTour)
+  .patch(protect, restrictTo('admin', 'lead-guide'), updateTour)
+  .delete(protect, restrictTo('admin', 'lead-guide'), deleteTour)
 
 // Points to Review Router 
 router.use('/:tourId/reviews', ReviewRouter)

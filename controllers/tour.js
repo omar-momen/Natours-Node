@@ -1,9 +1,7 @@
 import Tour from '../models/tour.js';
-import APIFeatures from '../utils/apiFeatures.js';
 import catchAsync from '../utils/catchAsync.js';
-import AppError from '../utils/appError.js';
 
-import { deleteOne, updateOne, createOne } from "./handlerFactory.js"
+import { deleteOne, updateOne, createOne, getOne, getAll } from "./handlerFactory.js"
 
 export async function aliasTopTours(req, res, next) {
   req.query.limit = 5;
@@ -11,29 +9,6 @@ export async function aliasTopTours(req, res, next) {
   next();
 }
 
-export const getAllTours = catchAsync(async (req, res, next) => {
-  const features = new APIFeatures(Tour.find(), req.query);
-  features.filter().sort().limitingFields().paginate();
-  const tours = await features.mongo_query;
-
-  res.status(200).json({
-    status: 'success',
-    results: tours.length,
-    data: tours,
-  });
-});
-export const getTour = catchAsync(async (req, res, next) => {
-  const tour = await Tour.findById(req.params.id).populate('reviews');
-
-  if (!tour) {
-    return next(new AppError('No tour found with that ID', 404));
-  }
-
-  res.status(200).json({
-    status: 'success',
-    data: tour,
-  });
-});
 export const getTourStats = catchAsync(async (req, res, next) => {
   const stats = await Tour.aggregate([
     {
@@ -101,6 +76,8 @@ export const getMonthlyPlan = catchAsync(async (req, res, next) => {
   });
 });
 
+export const getAllTours = getAll(Tour);
+export const getTour = getOne(Tour, { path: 'reviews' });
 export const updateTour = updateOne(Tour);
 export const deleteTour = deleteOne(Tour);
 export const createTour = createOne(Tour);
